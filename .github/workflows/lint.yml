@@ -28,3 +28,4 @@ jobs:
           version: latest
           args: >
             --timeout=5m
+            --go=1.24
