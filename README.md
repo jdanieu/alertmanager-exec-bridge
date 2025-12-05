@@ -54,6 +54,25 @@ The service does not persist:
 
 All configuration is provided via command-line flags, environment variables, or a mounted config file.
 
+--
+
+## Reliability & Failure Modes
+
+Deploying this bridge as an Alertmanager sidecar introduces an additional hop in the alert delivery pipeline, but it does **not** have to introduce a new silent single point of failure.
+
+The failure model should be:
+
+- If the sidecar container crashes or fails its liveness/readiness checks, the **entire Alertmanager Pod becomes NotReady** and is removed from the Service endpoints.
+- Operationally, this instance is treated exactly as “Alertmanager down” and must be covered by your existing fallback / secondary alerting channel (e.g. email, PagerDuty, another Alertmanager route).
+
+In other words, the bridge becomes part of the **health contract** of the Alertmanager Pod: if the bridge is not healthy, this instance is not considered a valid backend.
+
+There are still two important failure modes you must monitor explicitly:
+
+- The bridge process is running, but returns `5xx` to `/alert` (delivery failures to the external system).
+- Alertmanager is healthy, but the external receiver (e.g. Evolution API) is unavailable.
+
+Both conditions should be covered by additional alerts (e.g. based on Alertmanager metrics about failed notifications, or logs from the bridge), and by having at least one **independent notification channel** for “Alertmanager / alert pipeline is broken”.
 
 
 ---
