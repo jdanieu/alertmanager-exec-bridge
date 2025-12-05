@@ -1,0 +1,8 @@
+listen: ":9095"
+token: ""
+command: "/bin/sh"
+args:
+  - '-c'
+  - 'echo {{ .Status }} {{ .PrimaryAlertName }} > /tmp/alert.txt'
+timeout: "5s"
+log_level: "info"
