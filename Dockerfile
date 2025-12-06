@@ -10,8 +10,9 @@ RUN go mod download
 # Copiar el resto del código
 COPY . .
 
-# Compilar binario estático para Linux
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /alert-exec ./cmd/alert-exec
+# Compilar binario estático para Linux (arquitectura la decide buildx)
+# IMPORTANTE: no fijamos GOARCH ni GOOS aquí
+RUN CGO_ENABLED=0 go build -o /alert-exec ./cmd/alert-exec
 
 # Etapa 2: runtime
 FROM alpine:3.20
