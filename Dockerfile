@@ -17,8 +17,14 @@ RUN CGO_ENABLED=0 go build -o /alert-exec ./cmd/alert-exec
 # Etapa 2: runtime
 FROM alpine:3.20
 
+# Instalar python3 para scripts de notificación
+RUN apk add --no-cache python3
+
 # Añadir usuario no root
 RUN adduser -D -H -s /sbin/nologin alertexec
+
+# Dar permisos de ejecución a python3 para el usuario
+RUN chmod 755 /usr/bin/python3
 
 USER alertexec
 
